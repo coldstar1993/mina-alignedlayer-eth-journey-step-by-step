@@ -10,8 +10,8 @@ Alternatively, you could use the endpoints provided by MinaScan:
 * Mina Archive Node Graphql Endpoint: https://api.minascan.io/archive/devnet/v1/graphql/
 
 
-# Step3 - Setup AlignedLayer Node (private net)
-At the very beginning, kindly reference here for prequired installation: https://github.com/coldstar1993/nori_aligned_bridge-step-by-step/blob/main/readme.md#install-dependencies
+# Step2 - Setup AlignedLayer Node (private net)
+At the very beginning, kindly reference here for prequired installation on OS(Ubuntu 22.04.5 LTS): https://github.com/coldstar1993/nori_aligned_bridge-step-by-step/blob/main/readme.md#install-dependencies
 ```sh
 sudo apt update
 
@@ -83,7 +83,7 @@ git checkout staging
 
     ![operator_full_registration_and_start_ethereum_package.jpg](./images/operator_full_registration_and_start_ethereum_package.jpg)
 
-# Step4 - Bridge a Mina account
+# Step3 - Bridge a Mina account
 
 1. Setup the `nori_aligned_bridge/.env` file of the Bridge. A template is available in `.env.template`.
     1. Set `ETH_CHAIN` to `devnet`.
@@ -138,7 +138,7 @@ git checkout staging
     ![submit_account.jpg](./images/submit_account.jpg)
 
 
-# Step5 - Burn $ETH on Mina and Unlock it on Ethereum
+# Step4 - Burn $ETH on Mina and Unlock it on Ethereum
 
 1. Deploy the NoriTokenController Mina smart contract And MockMint And Burn $ETH：
 
@@ -155,6 +155,11 @@ git checkout staging
     ![deploy_example_app_contracts.jpg](./images/deploy_example_app_contracts.jpg)
 
     In the `nori_aligned_bridge/.env` file, set `NORI_TOKEN_STORAGE_ZKAPP_ADDRESS`(as well as `NORI_TOKEN_CONTROLLER_TOKEN_ID`) to the corresponding `alice's` address.
+
+    During test, You could mint more token and burn more token via this script:
+    ```sh
+    npm run build && node --max-old-space-size=8192 --max-old-space-size=8192 --max-semi-space-size=128 --no-liftoff --no-wasm-tier-up --experimental-vm-modules --experimental-wasm-modules target/src/e2e.align_mockmint_burn.spec.js
+    ```
 
 2. Unlock $ETH on Ethereum
 
@@ -192,6 +197,7 @@ git checkout staging
     }' \
     http://localhost:8545
     ```
+
 
 
 
