@@ -1,5 +1,3 @@
-At the very beginning, kindly reference here for prequired installation: https://github.com/coldstar1993/nori_aligned_bridge-step-by-step/blob/main/readme.md#install-dependencies
-
 This tutorial is based on: https://github.com/Nori-zk/nori_aligned_bridge/tree/feat/token-acct-verify , only for test purpose of Nori instead of Sudoku examples.
 
 # Step1 - Setup Mina Daemon Node & Archive Node
@@ -13,6 +11,20 @@ Alternatively, you could use the endpoints provided by MinaScan:
 
 
 # Step3 - Setup AlignedLayer Node (private net)
+At the very beginning, kindly reference here for prequired installation: https://github.com/coldstar1993/nori_aligned_bridge-step-by-step/blob/main/readme.md#install-dependencies
+```sh
+sudo apt update
+
+# install pkg-config, libssl-dev, g++
+sudo apt install pkg-config libssl-dev g++
+
+# install jq
+sudo apt install yq
+
+# install gvm, and go1.22.12 by gvm
+bash < <(curl -s -S -L https://raw.githubusercontent.com/moovweb/gvm/master/binscripts/gvm-installer)
+gvm install go1.22.12
+```
 
 1. Clone the [Aligned repo](https://github.com/yetanotherco/aligned_layer). And checkout to the `staging` branch:
 
@@ -180,5 +192,6 @@ git checkout staging
     }' \
     http://localhost:8545
     ```
+
 
 
