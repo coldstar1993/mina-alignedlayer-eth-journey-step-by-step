@@ -89,14 +89,18 @@ git checkout staging
     1. Set `ETH_CHAIN` to `devnet`.
     1. Set `MINA_RPC_URL` to the URL of the Mina node GraphQL API (See [Mina Daemon Node Graphql Endpoint](#step1---setup-mina-daemon-node--archive-node)).
 
-2. In the root folder, deploy the example Bridge's contracts with:
+2. In the root folder, deploy the Bridge's contracts with:
 
     ```sh
-    make gen_contract_abis
-    make deploy_example_bridge_contracts
+    gen_contract_abis
+
+    make deploy_all_bridge_contracts NORI_TOKEN_BRIDGE_INITIAL_BALANCE=<string>
     ```
 
-    The step deploys MinaAccountValidationExample.sol, MinaStateSettlementExample.sol, and NoriTokenController.sol. And for Test Purpose, NoriTokenController contract is deposited with some $ETH as simulated locked balance during its deployment.
+    Where:
+    - NORI_TOKEN_BRIDGE_INITIAL_BALANCE is optional, expressed in **ether** (e.g., `1` means 1 $ETH, `1.123` means 1.123 $ETH).
+
+    The step deploys `MinaAccountValidationExample.sol`, `MinaStateSettlementExample.sol`, and `NoriTokenController.sol`. And for Test Purpose, NoriTokenController contract is deposited with some $ETH as simulated locked balance during its deployment.
 
     ```sh
     curl -X POST \
@@ -113,7 +117,15 @@ git checkout staging
 
     ![deploy_example_bridge_contracts.jpg](./images/deploy_example_bridge_contracts.jpg)
   
-    In the `nori_aligned_bridge/.env` file, set `STATE_SETTLEMENT_ETH_ADDR`, `ACCOUNT_VALIDATION_ETH_ADDR` and `NORI_TOKEN_BRIDGE_DEVNET_ADDRESS` to the corresponding deployed contract addresses.
+    In the `nori_aligned_bridge/.env` file, set `STATE_SETTLEMENT_ETH_ADDR`, `ACCOUNT_VALIDATION_ETH_ADDR` and `NORI_TOKEN_BRIDGE_ETH_ADDRESS` to the corresponding deployed contract addresses. (tips: For convenience, the program generates a file (seen in screen logs, whose name is prefixed with `.generated.contract.addresses.{%Y%m%d%H%M%S}`) recording the three env parameters, just open it and copy them into .env)
+
+    If you expect to re-deploy NoriTokenBridge contract only, kindly re-exec 
+    
+    ```sh
+    make deploy_nori_token_bridge_contract NORI_TOKEN_BRIDGE_INITIAL_BALANCE=<string>
+    ```
+    
+    and later update `NORI_TOKEN_BRIDGE_ETH_ADDRESS` in `.env`.
 
 3. Submit a Mina state proof to verify:
 
@@ -126,11 +138,12 @@ git checkout staging
 4. Submit an account to verify:
 
     ```sh
-    make submit_account PUBLIC_KEY=<string> STATE_HASH=<string>
+    make submit_account PUBLIC_KEY=<string> TOKEN_ID=<string> STATE_HASH=<string>
     ```
 
     Where:
     - `PUBLIC_KEY` is the public key of the Mina account you want to verify
+    - `TOKEN_ID` is the token id of the fungible token owned by `NoriBridgeController` Mina Contract.
     - `STATE_HASH` is the hash of a Mina state that was verified in Ethereum (You could copy the one from the log of `make submit_devnet_state`)
 
     result image:
@@ -154,7 +167,7 @@ git checkout staging
     
     ![deploy_example_app_contracts.jpg](./images/deploy_example_app_contracts.jpg)
 
-    In the `nori_aligned_bridge/.env` file, set `NORI_TOKEN_STORAGE_ZKAPP_ADDRESS`(as well as `NORI_TOKEN_CONTROLLER_TOKEN_ID`) to the corresponding `alice's` address.
+    Tips: please record `NORI_TOKEN_STORAGE_ZKAPP_ADDRESS`(as well as `NORI_TOKEN_CONTROLLER_TOKEN_ID`) to the corresponding `alice's` address, and they are used as the command parameters followingly.
 
     During test, You could mint more token and burn more token via this script:
     ```sh
@@ -178,8 +191,13 @@ git checkout staging
 
     Then exec `Unlock` operation:
     ```sh
-    make execute_example_unlock_nori_token
+    make unlock_nori_token PUBLIC_KEY=<string> TOKEN_ID=<string> TO_UNLOCK_AMOUNT=<string>
     ```
+    
+    Where:
+    - `PUBLIC_KEY` is the public key of the Mina account you want to verify
+    - `TOKEN_ID` is the token id of the fungible token owned by `NoriBridgeController` Mina Contract.
+    - `TO_UNLOCK_AMOUNT` is expressed in **ether** (e.g., `1` means 1 $ETH, `1.123` means 1.123 $ETH).
 
     result image:
 
@@ -197,6 +215,7 @@ git checkout staging
     }' \
     http://localhost:8545
     ```
+
 
 
 
